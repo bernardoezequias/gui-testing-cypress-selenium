@@ -6,7 +6,7 @@ describe('shipping categories', () => {
     cy.get('.primary').click();
   });
   // Remove .only and implement others test cases!
-  it.only('create a new shipping category', () => {
+  it('create a new shipping category', () => {
     // Click in shipping categories in side menu
     cy.clickInFirst('a[href="/admin/shipping-categories/"]');
     // Click on create button
@@ -23,11 +23,26 @@ describe('shipping categories', () => {
     // Assert that shipping category has been created.
     cy.get('body').should('contain', 'Shipping category has been successfully created.');
   });
-  it('test case 2', () => {
-    // Implement your test case 2 code here
+
+  it('Search for a shipping category (33)', () => {
+    cy.clickInFirst('a[href="/admin/shipping-categories/"]');
+    cy.get('[id="criteria_search_type"]').select('contains');
+    cy.get('[id="criteria_search_value"]').type(33);
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    cy.get('tbody').should('contain', '33')
   });
-  it('test case 3', () => {
-    // Implement your test case 3 code here
+
+  it('Edit a shipping category name', () => {
+    cy.clickInFirst('a[href="/admin/shipping-categories/"]');
+    cy.get('[id="criteria_search_type"]').select('contains');
+    cy.get('[id="criteria_search_value"]').type(33);
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+
+    cy.get('a[href="/admin/shipping-categories/1/edit"]').click();
+    cy.get('[id="sylius_shipping_category_name"]').type('44');
+    cy.get('[id="sylius_save_changes_button"]').click();
+
+    cy.get('body').should('contain', 'Shipping category has been successfully updated.');
   });
 
   // Implement the remaining test cases in a similar manner
