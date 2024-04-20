@@ -24,25 +24,50 @@ describe('shipping categories', () => {
     cy.get('body').should('contain', 'Shipping category has been successfully created.');
   });
 
-  it('Search for a shipping category (33)', () => {
+  it('try to create an already existing shipping category', () => {
     cy.clickInFirst('a[href="/admin/shipping-categories/"]');
-    cy.get('[id="criteria_search_type"]').select('contains');
-    cy.get('[id="criteria_search_value"]').type(33);
-    cy.get('*[class^="ui blue labeled icon button"]').click();
-    cy.get('tbody').should('contain', '33')
+    
+    cy.get('*[class^="ui labeled icon button  primary "]').click();
+    cy.get('[id="sylius_shipping_category_code"]').type('33');
+    cy.get('[id="sylius_shipping_category_name"]').type('33');
+    cy.get('[id="sylius_shipping_category_description"]').type('3333');
+
+    cy.get('*[class^="ui labeled icon primary button"]').scrollIntoView().click();
+    cy.get('body').should('contain', 'This form contains errors.');
   });
 
-  it('Edit a shipping category name', () => {
+  it('search for a shipping category', () => {
+    cy.clickInFirst('a[href="/admin/shipping-categories/"]');
+    cy.get('[id="criteria_search_type"]').select('contains');
+    cy.get('[id="criteria_search_value"]').type(33);
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+    cy.get('tbody').should('contain', '33');
+  });
+
+  it('edit a shipping category name', () => {
     cy.clickInFirst('a[href="/admin/shipping-categories/"]');
     cy.get('[id="criteria_search_type"]').select('contains');
     cy.get('[id="criteria_search_value"]').type(33);
     cy.get('*[class^="ui blue labeled icon button"]').click();
 
-    cy.get('a[href="/admin/shipping-categories/1/edit"]').click();
+    cy.get('body > div.admin-layout.admin-layout--open > div.admin-layout__body > div.admin-layout__content > div.sylius-grid-wrapper > div.ui.segment.spaceless.sylius-grid-table-wrapper > table > tbody > tr > td:nth-child(6) > div > a').click();
     cy.get('[id="sylius_shipping_category_name"]').type('44');
     cy.get('[id="sylius_save_changes_button"]').click();
 
     cy.get('body').should('contain', 'Shipping category has been successfully updated.');
+  });
+
+  it('delete a category', () => {
+    cy.clickInFirst('a[href="/admin/shipping-categories/"]');
+    cy.get('[id="criteria_search_type"]').select('contains');
+    cy.get('[id="criteria_search_value"]').type(33);
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+
+    cy.get('div.admin-layout.admin-layout--open div.admin-layout__body div.admin-layout__content div.sylius-grid-wrapper div.ui.segment.spaceless.sylius-grid-table-wrapper table tbody tr td:nth-child(6) > div > form > button').click();
+    cy.get('[id="confirmation-button"]').click();
+
+    cy.get('body').should('contain', 'Shipping category has been successfully deleted.');
+
   });
 
   // Implement the remaining test cases in a similar manner

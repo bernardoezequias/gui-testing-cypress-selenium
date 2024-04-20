@@ -23,7 +23,7 @@ describe('shipping categories', () => {
   });
 
   // Remove .only and implement others test cases!
-  it.only('create a new shipping category', async () => {
+  it('create a new shipping category', async () => {
     // Click in shipping categories in side menu
     await driver.findElement(By.linkText('Shipping categories')).click();
 
@@ -47,12 +47,65 @@ describe('shipping categories', () => {
     assert(bodyText.includes('Shipping category has been successfully created.'));
   });
 
-  it('test case 2', async () => {
-    // Implement your test case 2 code here
+  it('try to create an already existing shipping category', async () => {
+    await driver.findElement(By.linkText('Shipping categories')).click();
+
+    const buttons = await driver.findElements(By.css('*[class^="ui labeled icon button  primary "]'));
+    await buttons[0].click();
+
+    await driver.findElement(By.id('sylius_shipping_category_code')).sendKeys('33');
+    await driver.findElement(By.id('sylius_shipping_category_name')).sendKeys('33');
+    await driver.findElement(By.id('sylius_shipping_category_description')).sendKeys('3333');
+
+    const buttonToCreate = await driver.findElements(By.css('*[class^="ui labeled icon primary button"]'));
+    await buttonToCreate[0].click();
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('This form contains errors.'));
   });
 
-  it('test case 3', async () => {
-    // Implement your test case 3 code here
+  it('search for a shipping category', async () => {
+    await driver.findElement(By.linkText('Shipping categories')).click();
+
+    const dropdown = await driver.findElement(By.id('criteria_search_type'));
+    await dropdown.click();
+    await dropdown.findElement(By.css('option[value="contains"]')).click();
+
+    await driver.findElement(By.id('criteria_search_value')).sendKeys('33');
+    const buttonToSearch = await driver.findElements(By.css('*[class^="ui labeled icon primary button"]'));
+    if (buttonToSearch.length > 0) {
+        await buttonToSearch[0].click();
+    } else {
+        console.error("Search button not found.");
+    }
+   
+    const tBody = await driver.findElement(By.tagName('tbody')).getText();
+    assert(tBody.includes('33'));
+  });
+
+  it('edit a shipping category name', async () => {
+    await driver.findElement(By.linkText('Shipping categories')).click();
+
+    const dropdown = await driver.findElement(By.id('criteria_search_type'));
+    await dropdown.click();
+    await dropdown.findElement(By.css('option[value="contains"]')).click();
+
+    await driver.findElement(By.id('criteria_search_value')).sendKeys('33');
+    const buttonToSearch = await driver.findElements(By.css('*[class^="ui labeled icon primary button"]'));
+    if (buttonToSearch.length > 0) {
+        await buttonToSearch[0].click();
+    } else {
+        console.error("Search button not found.");
+    }
+
+    await driver.findElement(By.css('body > div.admin-layout.admin-layout--open > div.admin-layout__body > div.admin-layout__content > div.sylius-grid-wrapper > div.ui.segment.spaceless.sylius-grid-table-wrapper > table > tbody > tr > td:nth-child(6) > div > a')).click();
+    await driver.findElement(By.id('sylius_shipping_category_name')).sendKeys('44');
+    await driver.findElement(By.id('sylius_save_changes_button')).click();
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('Shipping category has been successfully updated.'));
+
+
   });
 
   // Implement the remaining test cases in a similar manner
