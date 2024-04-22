@@ -108,5 +108,19 @@ describe('shipping categories', () => {
 
   });
 
+  it('delete a category', async () => {
+    await driver.findElement(By.linkText('Shipping categories')).click();
+
+    const dropdown = await driver.findElement(By.id('criteria_search_type'));
+    await dropdown.click();
+    await dropdown.findElement(By.css('option[value="contains"]')).click();
+
+    await driver.findElement(By.css('div.admin-layout.admin-layout--open div.admin-layout__body div.admin-layout__content div.sylius-grid-wrapper div.ui.segment.spaceless.sylius-grid-table-wrapper table tbody tr td:nth-child(6) > div > form > button')).click();
+    await driver.findElement(By.id('confirmation-button')).click();
+
+    const bodyText = await driver.findElement(By.tagName('body')).getText();
+    assert(bodyText.includes('Shipping category has been successfully deleted.'));
+  });
+
   // Implement the remaining test cases in a similar manner
 });
