@@ -83,6 +83,24 @@ describe('shipping categories', () => {
     assert(tBody.includes('33'));
   });
 
+  it('search for a non-existing shipping category', async () => {
+    await driver.findElement(By.linkText('Shipping categories')).click();
+    await driver.findElement(By.id('criteria_search_type')).select('contains');
+    await driver.findElement(By.id('criteria_search_value')).sendKeys('non_existing_category_name');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    const tbody = await driver.findElement(By.tagName('tbody')).getText();
+    assert(!tbody.includes('non_existing_category_name'));
+  });
+
+  it('search for an empty shipping category', async () => {
+  await driver.findElement(By.linkText('Shipping categories')).click();
+  await driver.findElement(By.id('criteria_search_type')).select('contains');
+  await driver.findElement(By.id('criteria_search_value')).sendKeys('{selectall}{backspace}');
+  await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+  const tbody = await driver.findElement(By.tagName('tbody')).findElements(By.tagName('tr'));
+  assert(tbody.length === 0);
+  });
+
   it('edit a shipping category name', async () => {
     await driver.findElement(By.linkText('Shipping categories')).click();
 
@@ -107,6 +125,38 @@ describe('shipping categories', () => {
 
 
   });
+
+  it('edit a non-existing shipping category', async () => {
+    await driver.findElement(By.linkText('Shipping categories')).click();
+    await driver.findElement(By.id('criteria_search_type')).select('contains');
+    await driver.findElement(By.id('criteria_search_value')).sendKeys('non_existing_category_name');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    const tbody = await driver.findElement(By.tagName('tbody')).getText();
+    assert(!tbody.includes('non_existing_category_name'));
+    // assert(await driver.findElement(By.css('button.edit-button')).getAttribute('disabled'));
+  });
+
+  it('view details of a shipping category', async () => {
+    await driver.findElement(By.linkText('Shipping categories')).click();
+    await driver.findElement(By.id('criteria_search_type')).select('contains');
+    await driver.findElement(By.id('criteria_search_value')).sendKeys(33);
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    await driver.findElement(By.css('tbody > tr:first-child > td:nth-child(6) > div > a:nth-child(1)')).click();
+    assert(await driver.findElement(By.css('[data-testid="shipping-category-code"]')).getText() === '33');
+    assert(await driver.findElement(By.css('[data-testid="shipping-category-name"]')).getText() === '33');
+    assert(await driver.findElement(By.css('[data-testid="shipping-category-description"]')).getText() === '3333');
+  });
+
+  it('delete a non-existing shipping category', async () => {
+    await driver.findElement(By.linkText('Shipping categories')).click();
+    await driver.findElement(By.id('criteria_search_type')).select('contains');
+    await driver.findElement(By.id('criteria_search_value')).sendKeys('non_existing_category_name');
+    await driver.findElement(By.css('*[class^="ui blue labeled icon button"]')).click();
+    const tbody = await driver.findElement(By.tagName('tbody')).getText();
+    assert(!tbody.includes('non_existing_category_name'));
+    // assert(await driver.findElement(By.css('button.delete-button')).getAttribute('disabled'));
+  });
+
 
   it('delete a category', async () => {
     await driver.findElement(By.linkText('Shipping categories')).click();
