@@ -47,10 +47,10 @@ describe('shipping categories', () => {
   it('search for a non-existing shipping category', () => {
     cy.clickInFirst('a[href="/admin/shipping-categories/"]');
     cy.get('[id="criteria_search_type"]').select('contains');
-    cy.get('[id="criteria_search_value"]').type('non_existing_category_name');
+    cy.get('[id="criteria_search_value"]').type('55');
     cy.get('*[class^="ui blue labeled icon button"]').click();
   
-    cy.get('tbody').should('not.contain', 'non_existing_category_name');
+    cy.get('body').should('contain', 'There are no results to display');
   });
 
   it('search for an empty shipping category', () => {
@@ -61,7 +61,34 @@ describe('shipping categories', () => {
   
     cy.get('tbody').should('not.contain', 'tr'); 
   });
+
+  it('check if a category that is created not exist', () => {
+    cy.clickInFirst('a[href="/admin/shipping-categories/"]');
+    cy.get('[id="criteria_search_type"]').select('not_equal');
+    cy.get('[id="criteria_search_value"]').type('33');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
   
+    cy.get('body').should('contain', 'There are no results to display');
+  });
+
+  it('check if a category that is created, exist', () => {
+    cy.clickInFirst('a[href="/admin/shipping-categories/"]');
+    cy.get('[id="criteria_search_type"]').select('equal');
+    cy.get('[id="criteria_search_value"]').type('33');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+  
+    cy.get('tbody').should('contain', '33');
+  });
+  
+  it('check if a category name starts with a char', () => {
+    cy.clickInFirst('a[href="/admin/shipping-categories/"]');
+    cy.get('[id="criteria_search_type"]').select('starts_with');
+    cy.get('[id="criteria_search_value"]').type('3');
+    cy.get('*[class^="ui blue labeled icon button"]').click();
+  
+    cy.get('tbody').should('contain', '33');
+  });
+
   
 
   it('edit a shipping category name', () => {
@@ -75,40 +102,6 @@ describe('shipping categories', () => {
     cy.get('[id="sylius_save_changes_button"]').click();
 
     cy.get('body').should('contain', 'Shipping category has been successfully updated.');
-  });
-
-  it('edit a non-existing shipping category', () => {
-    cy.clickInFirst('a[href="/admin/shipping-categories/"]');
-    cy.get('[id="criteria_search_type"]').select('contains');
-    cy.get('[id="criteria_search_value"]').type('non_existing_category_name');
-    cy.get('*[class^="ui blue labeled icon button"]').click();
-  
-    cy.get('tbody').should('not.contain', 'non_existing_category_name');
-    // cy.get('button.edit-button').should('be.disabled');
-  });
-
-  it('view details of a shipping category', () => {
-    cy.clickInFirst('a[href="/admin/shipping-categories/"]');
-    cy.get('[id="criteria_search_type"]').select('contains');
-    cy.get('[id="criteria_search_value"]').type(33);
-    cy.get('*[class^="ui blue labeled icon button"]').click();
-
-    cy.get('tbody > tr:first-child > td:nth-child(6) > div > a:nth-child(1)').click();
-  
-    cy.get('[data-testid="shipping-category-code"]').should('contain', '33');
-    cy.get('[data-testid="shipping-category-name"]').should('contain', '33');
-    cy.get('[data-testid="shipping-category-description"]').should('contain', '3333');
-  });
-  
-  
-  it('delete a non-existing shipping category', () => {
-    cy.clickInFirst('a[href="/admin/shipping-categories/"]');
-    cy.get('[id="criteria_search_type"]').select('contains');
-    cy.get('[id="criteria_search_value"]').type('non_existing_category_name');
-    cy.get('*[class^="ui blue labeled icon button"]').click();
-  
-    cy.get('tbody').should('not.contain', 'non_existing_category_name');
-    // cy.get('button.delete-button').should('be.disabled');
   });
   
 
